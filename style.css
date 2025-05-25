@@ -1,0 +1,129 @@
+/* General reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Body with lighter navy blue background and centered content */
+body {
+  background-color: #003366; /* lighter navy blue */
+  color: white;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Start screen container */
+#start-screen {
+  text-align: center;
+}
+
+/* Game title on start screen with subtle glow */
+#start-screen h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  color: white;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 5px #b18aff;
+}
+
+/* Start button */
+#start-screen button {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(45deg, #b18aff, #5c2dcc);
+  color: #003366;
+  box-shadow: 0 0 4px #8a52ff;
+  transition: background 0.3s ease;
+}
+
+#start-screen button:hover {
+  background: linear-gradient(45deg, #5c2dcc, #b18aff);
+}
+
+/* Game container hidden by default */
+#game-container {
+  position: relative;
+  width: 400px;
+  height: 600px;
+  background-color: #003366; /* lighter navy blue */
+  border-radius: 20px;
+  box-shadow: 0 0 20px #8a52ff;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 50px;
+}
+
+/* Canvas centered inside game container */
+#game-canvas {
+  background-color: #003366;
+  display: block;
+  margin: 0 auto;
+  border-radius: 12px;
+  box-shadow: 0 0 15px #8a52ff;
+}
+
+/* Score displayed top-left */
+#score {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 4px #b18aff;
+}
+
+/* Controls container top-right */
+#controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+/* Pause and Exit buttons styling */
+#controls button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(45deg, #b18aff, #5c2dcc);
+  color: #003366;
+  box-shadow: 0 0 4px #8a52ff;
+  transition: background 0.3s ease;
+}
+
+#controls button:hover {
+  background: linear-gradient(45deg, #5c2dcc, #b18aff);
+}
+
+/* Credit text bottom-left */
+.credit {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: white;
+  user-select: none;
+  text-shadow:
+    0 0 2px #8a52ff;
+}
+

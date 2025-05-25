@@ -191,3 +191,35 @@ function startGame() {
 
 document.getElementById('start-btn').addEventListener('click', startGame);
 
+// Add these after mouseMoveHandler and before pauseBtn eventListener:
+
+let isDragging = false;
+
+canvas.addEventListener('touchstart', (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const touchX = e.touches[0].clientX - rect.left;
+  const touchY = e.touches[0].clientY - rect.top;
+  if (
+    touchX > basket.x &&
+    touchX < basket.x + basket.width &&
+    touchY > basket.y &&
+    touchY < basket.y + basket.height
+  ) {
+    isDragging = true;
+  }
+});
+
+canvas.addEventListener('touchmove', (e) => {
+  if (isDragging) {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const touchX = e.touches[0].clientX - rect.left;
+    basket.x = touchX - basket.width / 2;
+    if (basket.x < 0) basket.x = 0;
+    if (basket.x + basket.width > canvas.width) basket.x = canvas.width - basket.width;
+  }
+});
+
+canvas.addEventListener('touchend', () => {
+  isDragging = false;
+});

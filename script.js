@@ -6,6 +6,9 @@ const pauseBtn = document.getElementById('pause-btn');
 const exitBtn = document.getElementById('exit-btn');
 const startScreen = document.getElementById('start-screen');
 const gameContainer = document.getElementById('game-container');
+const gameOverPopup = document.getElementById('game-over-popup');
+const tryAgainBtn = document.getElementById('try-again-btn');
+const exitPopupBtn = document.getElementById('exit-popup-btn');
 
 canvas.width = 400;
 canvas.height = 600;
@@ -105,9 +108,7 @@ function updateStars() {
       if (missedStars >= 5) {
         cancelAnimationFrame(animationId);
         clearInterval(starInterval);
-        alert("Game Over! You missed 5 stars.");
-        gameContainer.style.display = 'none';
-        startScreen.style.display = 'block';
+        gameOverPopup.style.display = 'block';
         return;
       }
     }
@@ -135,12 +136,12 @@ function gameLoop() {
 }
 
 function keyDownHandler(e) {
-  if (e.key === 'ArrowRight' || e.key === 'Right') basket.dx = basket.speed;
-  else if (e.key === 'ArrowLeft' || e.key === 'Left') basket.dx = -basket.speed;
+  if (e.key === 'ArrowRight') basket.dx = basket.speed;
+  else if (e.key === 'ArrowLeft') basket.dx = -basket.speed;
 }
 
 function keyUpHandler(e) {
-  if (['ArrowRight', 'Right', 'ArrowLeft', 'Left'].includes(e.key)) basket.dx = 0;
+  if (['ArrowRight', 'ArrowLeft'].includes(e.key)) basket.dx = 0;
 }
 
 function mouseMoveHandler(e) {
@@ -210,6 +211,7 @@ function startGame() {
   isPaused = false;
   pauseBtn.textContent = 'Pause';
   startScreen.style.display = 'none';
+  gameOverPopup.style.display = 'none';
   gameContainer.style.display = 'flex';
   if (animationId) cancelAnimationFrame(animationId);
   animationId = requestAnimationFrame(gameLoop);
@@ -218,3 +220,20 @@ function startGame() {
 }
 
 document.getElementById('start-btn').addEventListener('click', startGame);
+
+tryAgainBtn.addEventListener('click', () => {
+  gameOverPopup.style.display = 'none';
+  startGame();
+});
+
+exitPopupBtn.addEventListener('click', () => {
+  gameOverPopup.style.display = 'none';
+  stars = [];
+  score = 0;
+  missedStars = 0;
+  scoreElement.textContent = 'Score: 0 | Missed: 0';
+  isPaused = false;
+  pauseBtn.textContent = 'Pause';
+  gameContainer.style.display = 'none';
+  startScreen.style.display = 'block';
+});

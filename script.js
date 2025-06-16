@@ -1,6 +1,5 @@
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
-
 const scoreElement = document.getElementById('score');
 const pauseBtn = document.getElementById('pause-btn');
 const exitBtn = document.getElementById('exit-btn');
@@ -30,54 +29,31 @@ let missedStars = 0;
 let isPaused = false;
 let animationId = null;
 let starInterval;
+let isDragging = false;
 
 function createStar() {
   const x = Math.random() * (canvas.width - 2 * starRadius) + starRadius;
-  const y = -starRadius;
-  const speed = 2 + Math.random() * 2;
-  stars.push({ x, y, radius: starRadius, speed });
+  stars.push({ x, y: -starRadius, radius: starRadius, speed: 2 + Math.random() * 2 });
 }
 
 function drawBasket() {
   ctx.fillStyle = basket.color;
-  const r = 10;
   ctx.beginPath();
-  ctx.moveTo(basket.x + r, basket.y);
-  ctx.lineTo(basket.x + basket.width - r, basket.y);
-  ctx.quadraticCurveTo(basket.x + basket.width, basket.y, basket.x + basket.width, basket.y + r);
-  ctx.lineTo(basket.x + basket.width, basket.y + basket.height - r);
-  ctx.quadraticCurveTo(basket.x + basket.width, basket.y + basket.height, basket.x + basket.width - r, basket.y + basket.height);
-  ctx.lineTo(basket.x + r, basket.y + basket.height);
-  ctx.quadraticCurveTo(basket.x, basket.y + basket.height, basket.x, basket.y + basket.height - r);
-  ctx.lineTo(basket.x, basket.y + r);
-  ctx.quadraticCurveTo(basket.x, basket.y, basket.x + r, basket.y);
-  ctx.closePath();
+  ctx.roundRect(basket.x, basket.y, basket.width, basket.height, 10);
   ctx.fill();
 }
 
 function drawStar(star) {
-  const spikes = 5;
-  const outerRadius = star.radius;
-  const innerRadius = star.radius / 2.5;
-  let rot = Math.PI / 2 * 3;
-  let x = star.x;
-  let y = star.y;
-  let step = Math.PI / spikes;
-
+  const spikes = 5, outer = star.radius, inner = outer / 2.5;
+  let rot = Math.PI / 2 * 3, step = Math.PI / spikes, x = star.x, y = star.y;
   ctx.beginPath();
-  ctx.moveTo(x, y - outerRadius);
+  ctx.moveTo(x, y - outer);
   for (let i = 0; i < spikes; i++) {
-    let sx = x + Math.cos(rot) * outerRadius;
-    let sy = y + Math.sin(rot) * outerRadius;
-    ctx.lineTo(sx, sy);
+    ctx.lineTo(x + Math.cos(rot) * outer, y + Math.sin(rot) * outer);
     rot += step;
-
-    sx = x + Math.cos(rot) * innerRadius;
-    sy = y + Math.sin(rot) * innerRadius;
-    ctx.lineTo(sx, sy);
+    ctx.lineTo(x + Math.cos(rot) * inner, y + Math.sin(rot) * inner);
     rot += step;
   }
-  ctx.lineTo(x, y - outerRadius);
   ctx.closePath();
   ctx.fillStyle = '#b18aff';
   ctx.shadowColor = '#8a52ff';
@@ -94,7 +70,6 @@ function moveBasket() {
 function updateStars() {
   for (let i = stars.length - 1; i >= 0; i--) {
     stars[i].y += stars[i].speed;
-
     if (
       stars[i].y + stars[i].radius > basket.y &&
       stars[i].x > basket.x &&
@@ -105,23 +80,25 @@ function updateStars() {
     } else if (stars[i].y - stars[i].radius > canvas.height) {
       stars.splice(i, 1);
       missedStars++;
-      if (missedStars >= 5) {
-        cancelAnimationFrame(animationId);
-        clearInterval(starInterval);
-        gameOverPopup.style.display = 'block';
-        return;
-      }
     }
   }
+
+  if (missedStars >= 5) return endGame();
   scoreElement.textContent = `Score: ${score} | Missed: ${missedStars}`;
 }
 
-function clear() {
+function endGame() {
+  cancelAnimationFrame(animationId);
+  clearInterval(starInterval);
+  gameOverPopup.style.display = 'block';
+}
+
+function clearCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function draw() {
-  clear();
+  clearCanvas();
   drawBasket();
   stars.forEach(drawStar);
 }
@@ -135,105 +112,58 @@ function gameLoop() {
   animationId = requestAnimationFrame(gameLoop);
 }
 
-function keyDownHandler(e) {
-  if (e.key === 'ArrowRight') basket.dx = basket.speed;
-  else if (e.key === 'ArrowLeft') basket.dx = -basket.speed;
+function startGame() {
+  score = 0;
+  missedStars = 0;
+  stars = [];
+  basket.x = canvas.width / 2 - basket.width / 2;
+  isPaused = false;
+  gameOverPopup.style.display = 'none';
+  scoreElement.textContent = `Score: 0 | Missed: 0`;
+  startScreen.style.display = 'none';
+  gameContainer.style.display = 'flex';
+  cancelAnimationFrame(animationId);
+  clearInterval(starInterval);
+  animationId = requestAnimationFrame(gameLoop);
+  starInterval = setInterval(createStar, 1000);
 }
 
-function keyUpHandler(e) {
-  if (['ArrowRight', 'ArrowLeft'].includes(e.key)) basket.dx = 0;
-}
-
-function mouseMoveHandler(e) {
-  const rect = canvas.getBoundingClientRect();
-  const mouseX = e.clientX - rect.left;
-  basket.x = mouseX - basket.width / 2;
-  basket.x = Math.max(0, Math.min(canvas.width - basket.width, basket.x));
-}
-
-let isDragging = false;
-canvas.addEventListener('touchstart', (e) => {
-  const rect = canvas.getBoundingClientRect();
-  const touchX = e.touches[0].clientX - rect.left;
-  const touchY = e.touches[0].clientY - rect.top;
-  if (
-    touchX > basket.x &&
-    touchX < basket.x + basket.width &&
-    touchY > basket.y &&
-    touchY < basket.y + basket.height
-  ) {
-    isDragging = true;
-  }
-});
-
-canvas.addEventListener('touchmove', (e) => {
-  if (isDragging) {
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const touchX = e.touches[0].clientX - rect.left;
-    basket.x = touchX - basket.width / 2;
-    basket.x = Math.max(0, Math.min(canvas.width - basket.width, basket.x));
-  }
-});
-
-canvas.addEventListener('touchend', () => {
-  isDragging = false;
-});
-
+// Controls
+document.getElementById('start-btn').addEventListener('click', startGame);
 pauseBtn.addEventListener('click', () => {
   isPaused = !isPaused;
   pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
 });
-
 exitBtn.addEventListener('click', () => {
   cancelAnimationFrame(animationId);
-  clearInterval(starInterval);
-  stars = [];
-  score = 0;
-  missedStars = 0;
-  scoreElement.textContent = 'Score: 0 | Missed: 0';
-  isPaused = false;
-  pauseBtn.textContent = 'Pause';
   gameContainer.style.display = 'none';
   startScreen.style.display = 'block';
 });
-
-document.addEventListener('keydown', keyDownHandler);
-document.addEventListener('keyup', keyUpHandler);
-canvas.addEventListener('mousemove', mouseMoveHandler);
-
-function startGame() {
-  basket.x = canvas.width / 2 - basket.width / 2;
-  stars = [];
-  score = 0;
-  missedStars = 0;
-  scoreElement.textContent = 'Score: 0 | Missed: 0';
-  isPaused = false;
-  pauseBtn.textContent = 'Pause';
-  startScreen.style.display = 'none';
-  gameOverPopup.style.display = 'none';
-  gameContainer.style.display = 'flex';
-  if (animationId) cancelAnimationFrame(animationId);
-  animationId = requestAnimationFrame(gameLoop);
-  if (starInterval) clearInterval(starInterval);
-  starInterval = setInterval(createStar, 1000);
-}
-
-document.getElementById('start-btn').addEventListener('click', startGame);
-
-tryAgainBtn.addEventListener('click', () => {
-  gameOverPopup.style.display = 'none';
-  startGame();
-});
-
+tryAgainBtn.addEventListener('click', () => startGame());
 exitPopupBtn.addEventListener('click', () => {
   gameOverPopup.style.display = 'none';
-  stars = [];
-  score = 0;
-  missedStars = 0;
-  scoreElement.textContent = 'Score: 0 | Missed: 0';
-  isPaused = false;
-  pauseBtn.textContent = 'Pause';
   gameContainer.style.display = 'none';
   startScreen.style.display = 'block';
 });
+
+document.addEventListener('keydown', e => {
+  basket.dx = (e.key === 'ArrowRight') ? basket.speed : (e.key === 'ArrowLeft') ? -basket.speed : 0;
+});
+document.addEventListener('keyup', () => basket.dx = 0);
+canvas.addEventListener('mousemove', e => {
+  const mouseX = e.clientX - canvas.getBoundingClientRect().left;
+  basket.x = mouseX - basket.width / 2;
+});
+canvas.addEventListener('touchstart', e => {
+  const t = e.touches[0], r = canvas.getBoundingClientRect();
+  const tx = t.clientX - r.left, ty = t.clientY - r.top;
+  if (tx > basket.x && tx < basket.x + basket.width && ty > basket.y && ty < basket.y + basket.height) isDragging = true;
+});
+canvas.addEventListener('touchmove', e => {
+  if (isDragging) {
+    e.preventDefault();
+    const tx = e.touches[0].clientX - canvas.getBoundingClientRect().left;
+    basket.x = tx - basket.width / 2;
+  }
+});
+canvas.addEventListener('touchend', () => isDragging = false);

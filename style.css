@@ -1,3 +1,4 @@
+/* General reset */
 * {
   margin: 0;
   padding: 0;
@@ -23,7 +24,6 @@ body {
 #start-screen h1 {
   font-size: 3rem;
   margin-bottom: 20px;
-  color: white;
   text-shadow: 0 0 2px #fff, 0 0 5px #b18aff;
 }
 
@@ -37,7 +37,6 @@ body {
   background: linear-gradient(45deg, #b18aff, #5c2dcc);
   color: #003366;
   box-shadow: 0 0 4px #8a52ff;
-  transition: background 0.3s ease;
 }
 
 #start-screen button:hover {
@@ -93,7 +92,6 @@ body {
   background: linear-gradient(45deg, #b18aff, #5c2dcc);
   color: #003366;
   box-shadow: 0 0 4px #8a52ff;
-  transition: background 0.3s ease;
 }
 
 #controls button:hover {
@@ -116,30 +114,24 @@ body {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(0.9);
+  transform: translate(-50%, -50%) scale(1);
   background-color: rgba(26, 26, 61, 0.95);
   padding: 30px;
   border-radius: 20px;
   text-align: center;
   box-shadow: 0 0 15px #8a52ff;
-  display: none;
+  backdrop-filter: blur(10px);
   z-index: 10;
-  backdrop-filter: blur(8px);
+  display: none;
+  opacity: 0;
   animation: fadeInPopup 0.4s ease forwards;
-}
-
-@keyframes fadeInPopup {
-  to {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-  }
 }
 
 .popup h2 {
   font-size: 2rem;
-  color: white;
+  color: #ffe4ff;
   margin-bottom: 10px;
-  text-shadow: 0 0 3px #b18aff;
+  text-shadow: 0 0 6px #ffccff;
 }
 
 .popup p {
@@ -151,20 +143,29 @@ body {
   display: flex;
   justify-content: center;
   gap: 15px;
+  margin-top: 15px;
 }
 
-.popup-buttons button {
+.green-btn {
+  background: linear-gradient(45deg, #90ee90, #32cd32);
+  color: #003366;
   padding: 10px 20px;
-  font-size: 1rem;
-  font-weight: bold;
   border: none;
   border-radius: 10px;
-  cursor: pointer;
-  background: linear-gradient(45deg, #b18aff, #5c2dcc);
-  color: #003366;
-  box-shadow: 0 0 4px #8a52ff;
+  font-weight: bold;
 }
 
-.popup-buttons button:hover {
-  background: linear-gradient(45deg, #5c2dcc, #b18aff);
+.red-btn {
+  background: linear-gradient(45deg, #ff6666, #cc0000);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+@keyframes fadeInPopup {
+  to {
+    opacity: 1;
+  }
 }

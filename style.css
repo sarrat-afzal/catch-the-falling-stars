@@ -1,13 +1,11 @@
-/* General reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Body with lighter navy blue background and centered content */
 body {
-  background-color: #003366; /* lighter navy blue */
+  background-color: #003366;
   color: white;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   height: 100vh;
@@ -18,22 +16,17 @@ body {
   overflow: hidden;
 }
 
-/* Start screen container */
 #start-screen {
   text-align: center;
 }
 
-/* Game title on start screen with subtle glow */
 #start-screen h1 {
   font-size: 3rem;
   margin-bottom: 20px;
   color: white;
-  text-shadow:
-    0 0 2px #fff,
-    0 0 5px #b18aff;
+  text-shadow: 0 0 2px #fff, 0 0 5px #b18aff;
 }
 
-/* Start button */
 #start-screen button {
   padding: 12px 24px;
   font-size: 1.2rem;
@@ -51,12 +44,11 @@ body {
   background: linear-gradient(45deg, #5c2dcc, #b18aff);
 }
 
-/* Game container hidden by default */
 #game-container {
   position: relative;
   width: 400px;
   height: 600px;
-  background-color: #003366; /* lighter navy blue */
+  background-color: #003366;
   border-radius: 20px;
   box-shadow: 0 0 20px #8a52ff;
   display: none;
@@ -66,7 +58,6 @@ body {
   padding-top: 50px;
 }
 
-/* Canvas centered inside game container */
 #game-canvas {
   background-color: #003366;
   display: block;
@@ -75,19 +66,15 @@ body {
   box-shadow: 0 0 15px #8a52ff;
 }
 
-/* Score displayed top-left */
 #score {
   position: absolute;
   top: 10px;
   left: 10px;
   font-size: 1.2rem;
   font-weight: bold;
-  text-shadow:
-    0 0 2px #fff,
-    0 0 4px #b18aff;
+  text-shadow: 0 0 2px #fff, 0 0 4px #b18aff;
 }
 
-/* Controls container top-right */
 #controls {
   position: absolute;
   top: 10px;
@@ -96,7 +83,6 @@ body {
   gap: 10px;
 }
 
-/* Pause and Exit buttons styling */
 #controls button {
   padding: 8px 16px;
   font-size: 1rem;
@@ -114,7 +100,6 @@ body {
   background: linear-gradient(45deg, #5c2dcc, #b18aff);
 }
 
-/* Credit text bottom-left */
 .credit {
   position: fixed;
   bottom: 10px;
@@ -123,7 +108,63 @@ body {
   font-weight: 600;
   color: white;
   user-select: none;
-  text-shadow:
-    0 0 2px #8a52ff;
+  text-shadow: 0 0 2px #8a52ff;
 }
 
+/* Game Over Popup */
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background-color: rgba(26, 26, 61, 0.95);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 0 15px #8a52ff;
+  display: none;
+  z-index: 10;
+  backdrop-filter: blur(8px);
+  animation: fadeInPopup 0.4s ease forwards;
+}
+
+@keyframes fadeInPopup {
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.popup h2 {
+  font-size: 2rem;
+  color: white;
+  margin-bottom: 10px;
+  text-shadow: 0 0 3px #b18aff;
+}
+
+.popup p {
+  color: #ccc;
+  margin-bottom: 20px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.popup-buttons button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: linear-gradient(45deg, #b18aff, #5c2dcc);
+  color: #003366;
+  box-shadow: 0 0 4px #8a52ff;
+}
+
+.popup-buttons button:hover {
+  background: linear-gradient(45deg, #5c2dcc, #b18aff);
+}
